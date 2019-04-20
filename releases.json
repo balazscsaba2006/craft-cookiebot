@@ -6,5 +6,13 @@
     "notes": [
       "[Added] Initial release"
     ]
+  },
+  {
+    "version": "1.1.0",
+    "downloadUrl": "https://github.com/balazscsaba2006/craft-cookiebot/archive/master.zip",
+    "date": "2010-04-20T11:49:22.152Z",
+    "notes": [
+      "[Fixed] Upgraded cookiebot support for version 2 of the cookie, that handles cookies that don't require consent"
+    ]
   }
 ]

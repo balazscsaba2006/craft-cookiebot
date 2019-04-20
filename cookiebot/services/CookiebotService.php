@@ -21,8 +21,20 @@ class CookiebotService extends BaseApplicationComponent
     /**
      * @return bool
      */
+    public function requiresConsent(): bool
+    {
+        return $this->isCookieSet() && '-1' !== $_COOKIE[self::COOKIE_NAME];
+    }
+
+    /**
+     * @return bool
+     */
     public function hasConsent(): bool
     {
+        if (!$this->requiresConsent()) {
+            return true;
+        }
+
         return $this->isCookieSet() && '0' !== $_COOKIE[self::COOKIE_NAME];
     }
 
@@ -31,6 +43,10 @@ class CookiebotService extends BaseApplicationComponent
      */
     public function hasPreferencesConsent(): bool
     {
+        if (!$this->requiresConsent()) {
+            return true;
+        }
+
         return $this->decodeCookie()->preferences;
     }
 
@@ -39,6 +55,10 @@ class CookiebotService extends BaseApplicationComponent
      */
     public function hasStatisticsConsent(): bool
     {
+        if (!$this->requiresConsent()) {
+            return true;
+        }
+
         return $this->decodeCookie()->statistics;
     }
 
@@ -47,6 +67,10 @@ class CookiebotService extends BaseApplicationComponent
      */
     public function hasMarketingConsent(): bool
     {
+        if (!$this->requiresConsent()) {
+            return true;
+        }
+
         return $this->decodeCookie()->marketing;
     }
 
@@ -106,6 +130,12 @@ class CookiebotService extends BaseApplicationComponent
             return $this->cookieConsent;
         }
 
+        if (!$this->requiresConsent()) {
+            $this->cookieConsent = $this->createConsentObject(true, true, true);
+
+            return $this->cookieConsent;
+        }
+
         // the user has not accepted cookies
         if (!$this->hasConsent()) {
             $this->cookieConsent = $this->createConsentObject();
@@ -160,6 +190,10 @@ class CookiebotService extends BaseApplicationComponent
      */
     private function renderScript(string $type, string $culture = null): string
     {
+        if (!$this->requiresConsent()) {
+            return '';
+        }
+
         $settings = craft()->plugins->getPlugin('cookiebot')->getSettings();
         $vars['domainGroupID'] = $settings->domainGroupID;
         $vars['culture'] = $culture;
